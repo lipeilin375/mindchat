@@ -1,0 +1,30 @@
+# ── Web framework ─────────────────────────────────────────────────────────────
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+
+# ── Database ──────────────────────────────────────────────────────────────────
+sqlalchemy==2.0.36
+alembic==1.14.0
+
+# ── Auth ──────────────────────────────────────────────────────────────────────
+python-jose[cryptography]==3.3.0
+bcrypt==4.2.1
+
+# ── Config ────────────────────────────────────────────────────────────────────
+pydantic-settings==2.6.1
+python-dotenv==1.0.1
+
+# ── File uploads ──────────────────────────────────────────────────────────────
+python-multipart==0.0.12
+
+# ── Whisper (faster-whisper, CPU inference via CTranslate2) ───────────────────
+faster-whisper==1.1.0
+requests==2.32.3
+numpy==1.26.4
+ffmpeg-python==0.2.0
+
+# ── HTTP client (for Ollama calls) ────────────────────────────────────────────
+httpx==0.27.2
+
+# ── OpenAI SDK (optional provider) ───────────────────────────────────────────
+openai==1.55.3
