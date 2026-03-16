@@ -27,9 +27,17 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str = ""
 
     # ── LLM ───────────────────────────────────────────
-    LLM_PROVIDER: str = "ollama"      # ollama | openai
+    # provider: ollama | openai | custom
+    LLM_PROVIDER: str = "custom"
+
     OLLAMA_BASE_URL: str = "http://ollama:11434"
     OLLAMA_MODEL: str = "qwen3:8b"
+
+    # ── Custom LLM (OpenRouter / any OpenAI-compatible API) ───
+    # LLM_PROVIDER=custom to activate
+    CUSTOM_LLM_BASE_URL: str = "https://v1.neuroweave.asia/chat/completions"
+    CUSTOM_LLM_MODEL: str = "openrouter/hunter-alpha"
+    CUSTOM_LLM_API_KEY: str = "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"
 
     # ── CORS ──────────────────────────────────────────
     CORS_ORIGINS: list[str] = ["http://localhost:5173", "http://localhost"]
