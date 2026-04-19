@@ -8,7 +8,7 @@ from app.models.emotion_analysis import EmotionAnalysis
 from app.models.alert import Alert
 from app.utils.audio import save_audio_as_mp3
 from app.services.whisper_service import transcribe_audio
-from app.services.llm_service import analyze_emotion
+from app.services.llm_service import analyze_emotion, analyze_mental_data
 from app.schemas.analysis import AnalysisResponse
 
 logger = logging.getLogger(__name__)
@@ -90,23 +90,24 @@ async def process_voice_analysis(
 
         # ── Step 3: LLM analysis ─────────────────────────────────────────────
         logger.info(f"Running LLM analysis for record {record.id}")
-        analysis_data = await analyze_emotion(transcription_text)
+        analysis_data = await analyze_emotion(record.file_path, transcription_text)
+        mental_data = await analyze_mental_data(transcription_text, json.dumps(analysis_data.get("probs", {}), ensure_ascii=False))
 
         # Normalise depression_level using phq_score as ground truth
-        phq_score = int(analysis_data.get("phq_score") or 0)
-        depression_level = analysis_data.get("depression_level") or _phq_to_level(phq_score)
+        phq_score = int(mental_data.get("phq_score") or 0)
+        depression_level = mental_data.get("depression_level") or _phq_to_level(phq_score)
 
         # ── Step 4: Persist ──────────────────────────────────────────────────
         analysis = EmotionAnalysis(
             record_id=record.id,
             user_id=user_id,
-            primary_emotion=analysis_data.get("primary_emotion"),
-            emotion_scores=json.dumps(analysis_data.get("emotion_scores", {}), ensure_ascii=False),
+            primary_emotion=analysis_data.get("emotion"),
+            emotion_scores=json.dumps(analysis_data.get("probs", {}), ensure_ascii=False),
             depression_level=depression_level,
             phq_score=phq_score,
-            risk_factors=json.dumps(analysis_data.get("risk_factors", []), ensure_ascii=False),
-            llm_analysis=analysis_data.get("llm_analysis"),
-            suggestions=json.dumps(analysis_data.get("suggestions", []), ensure_ascii=False),
+            risk_factors=json.dumps(mental_data.get("risk_factors", []), ensure_ascii=False),
+            llm_analysis=mental_data.get("llm_analysis"),
+            suggestions=json.dumps(mental_data.get("suggestions", []), ensure_ascii=False),
         )
         db.add(analysis)
         record.status = "done"

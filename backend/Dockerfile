@@ -33,23 +33,15 @@ COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 WORKDIR /app
-COPY . .
 
-RUN mkdir -p /app/data /app/uploads/audio /app/data/hf_cache /app/data/cache /home/appuser && \
-    addgroup --system appgroup && \
-    adduser --system --ingroup appgroup --home /home/appuser appuser && \
-    chown -R appuser:appgroup /app /home/appuser && \
-    chmod +x /app/entrypoint.sh
+RUN mkdir -p /app/data /app/uploads/audio /app/data/hf_cache /app/data/cache /home/appuser
 
 ENV HF_HOME=/app/data/hf_cache
 ENV XDG_CACHE_HOME=/app/data/cache
-
-# 以 root 启动，entrypoint.sh 修正 volume 权限后用 gosu 切换到 appuser
-USER root
 
 EXPOSE 8000
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]

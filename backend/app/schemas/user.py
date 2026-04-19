@@ -8,6 +8,10 @@ class UserProfileUpdate(BaseModel):
     phone: str | None = None
 
 
+class ChangePasswordUpdate(BaseModel):
+    state: bool | None = None
+
+
 class UserProfile(BaseModel):
     id: int
     username: str
@@ -20,6 +24,11 @@ class UserProfile(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ChangePassword(BaseModel):
+    old_password: str
+    new_password: str
 
 
 class AdminUserListItem(BaseModel):
