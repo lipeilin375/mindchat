@@ -20,7 +20,7 @@ window.onload = function () {
         }
     }).done(function (response, textStatus, xhr) {
         if (xhr.status === 200) {
-            document.querySelector("#total_analyses").innerText = response.length;
+            document.querySelector("#total_analyses").innerText = response.total;
             var emotion = {
                 "angry": 0,
                 "disgust": 0,
@@ -31,7 +31,7 @@ window.onload = function () {
             };
             var depression = { "none": 0, "mild": 0, "moderate": 0, "severe": 0 }
             var depression_count = 0
-            response.forEach(e => {
+            response.items.forEach(e => {
                 if (e.depression_level === 'severe') {
                     depression_count++;
                 }

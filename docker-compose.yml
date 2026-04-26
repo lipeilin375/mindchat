@@ -19,18 +19,18 @@ services:
     networks:
       - emotion_net
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: emotion_frontend
-    restart: unless-stopped
-    ports:
-      - "8001:8001"
-    depends_on:
-      - backend
-    networks:
-      - emotion_net
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   container_name: emotion_frontend
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8001:8001"
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - emotion_net
 
   # ── Ollama LLM service ───────────────────────────────────────────────────────
   # ollama:
