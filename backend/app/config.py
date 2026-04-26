@@ -28,7 +28,7 @@ class Settings(BaseSettings):
 
     # ── LLM ───────────────────────────────────────────
     # provider: ollama | openai | custom
-    LLM_PROVIDER: str = "custom"
+    LLM_PROVIDER: str = "ollama"
 
     OLLAMA_BASE_URL: str = "http://host.docker.internal:11434"
     OLLAMA_MODEL: str = "qwen3:8b"
@@ -37,10 +37,10 @@ class Settings(BaseSettings):
     # LLM_PROVIDER=custom to activate
     CUSTOM_LLM_BASE_URL: str = "https://v1.neuroweave.asia/chat/completions"
     CUSTOM_LLM_MODEL: str = "liquid/lfm-2.5-1.2b-instruct-20260120:free"
-    CUSTOM_LLM_API_KEY: str = "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"
+    CUSTOM_LLM_API_KEY: str = ""
 
     # ── CORS ──────────────────────────────────────────
-    CORS_ORIGINS: list[str] = ["http://127.0.0.1:5500","http://localhost:5500"]
+    CORS_ORIGINS: list[str] = ["http://127.0.0.1:5500","http://localhost:5500","https://www.mindchat.dpdns.org"]
 
     class Config:
         env_file = ".env"

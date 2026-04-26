@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+  <title>情绪分析历史记录</title>
+  <link rel="stylesheet" type="text/css" href="../css/materialdesignicons.min.css">
+  <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="../css/animate.min.css">
+  <link rel="stylesheet" href="../js/bootstrap-table/bootstrap-table.min.css">
+  <link rel="stylesheet" type="text/css" href="../css/style.min.css">
+  <link href="//unpkg.com/layui@2.13.5/dist/css/layui.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <header class="card-header">
+            <div class="card-title">情绪分析历史记录</div>
+          </header>
+          <div class="card-body">
+
+            <div class="table-responsive">
+              <table id="historyTable" lay-filter="historyTableFilter"></table>
+
+              <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h6 class="modal-title" id="detailModalLabel">记录详情 #</h6>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <p><strong>主要情绪:</strong> <span id="detail_primary_emotion" class="badge"></span></p>
+                      <p><strong>抑郁程度:</strong> <span id="detail_depression_level"></span></p>
+                      <p><strong>PHQ-9评分:</strong> <span id="detail_phq_score"></span></p>
+                      <p><strong>分析时间:</strong> <span id="detail_created_at"></span></p>
+                      <canvas id="emotion_distribution_chart" width="5rem" height="5rem"></canvas>
+                      <hr>
+                      <h6>ASR转录文本:</h6>
+                      <p id="detail_ASR_text"></p>
+                      <hr>
+                      <h6>分析结果:</h6>
+                      <pre id="detail_analysis_result"></pre>
+                      <hr>
+                      <h6>分析建议:</h6>
+                      <div class="accordion" id="accordionSuggestion">
+
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/html" id="toolbarTpl">
+    <button class="layui-btn layui-btn-sm" lay-event="detail">查看详情</button>
+  </script>
+
+  <script src="https://unpkg.com/layui@2.13.5/dist/layui.js"></script>
+  <script type="text/javascript" src="../js/jquery.min.js"></script>
+  <script type="text/javascript" src="../js/popper.min.js"></script>
+  <script type="text/javascript" src="../js/chart.min.js"></script>
+  <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../js/lyear-loading.js"></script>
+  <script type="text/javascript" src="../js/main.min.js"></script>
+  <script type="text/javascript" src="../js/bootstrap-notify.min.js"></script>
+  <script type="text/javascript" src="../config.js"></script>
+  <script type="text/javascript" src="./analyze_history.js"></script>
+</body>
+
+</html>

@@ -6,8 +6,8 @@ from app.database import get_db
 from app.models.user import User
 from app.models.emotion_analysis import EmotionAnalysis
 from app.models.alert import Alert
-from app.schemas.user import AdminUserListItem, AdminUserStatusUpdate
-from app.schemas.analysis import AlertResponse, AdminStatsResponse, AnalysisResponse, AnalysisListItem
+from app.schemas.user import AdminUserListItem, AdminUserListResponse, AdminUserStatusUpdate
+from app.schemas.analysis import AlertListResponse, AlertResponse, AdminStatsResponse, AnalysisListResponse, AnalysisResponse, AnalysisListItem
 from app.models.audio_record import AudioRecord
 from app.dependencies import get_admin_user
 
@@ -62,7 +62,7 @@ def get_stats(
 # User Management
 # ─────────────────────────────────────────────────────────────────────────────
 
-@router.get("/users", response_model=list[AdminUserListItem], summary="用户列表")
+@router.get("/users", response_model=AdminUserListResponse, summary="用户列表")
 def list_users(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
@@ -73,7 +73,21 @@ def list_users(
     q = db.query(User).filter(User.role == "user")
     if search:
         q = q.filter(User.username.ilike(f"%{search}%"))
-    return q.order_by(User.created_at.desc()).offset(skip).limit(limit).all()
+    total = q.count()
+    rows = (
+        q.order_by(User.created_at.desc())
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+    items = [
+        AdminUserListItem.model_validate(r)
+        for r in rows
+    ]
+    return {
+        "total": total,
+        "items": items
+    }
 
 
 @router.get("/users/{user_id}", response_model=AdminUserListItem, summary="用户详情")
@@ -104,7 +118,7 @@ def update_user_status(
     return user
 
 
-@router.get("/users/{user_id}/analyses", response_model=list[AnalysisListItem], summary="指定用户的分析记录")
+@router.get("/users/{user_id}/analyses", response_model=AnalysisListResponse, summary="指定用户的分析记录")
 def get_user_analyses(
     user_id: int,
     skip: int = Query(0, ge=0),
@@ -112,6 +126,10 @@ def get_user_analyses(
     db: Session = Depends(get_db),
     _: User = Depends(get_admin_user),
 ):
+    q = db.query(EmotionAnalysis).filter(
+        EmotionAnalysis.user_id == user_id
+    )
+    total = q.count()
     rows = (
         db.query(EmotionAnalysis)
         .filter(EmotionAnalysis.user_id == user_id)
@@ -120,7 +138,7 @@ def get_user_analyses(
         .limit(limit)
         .all()
     )
-    return [
+    items = [
         AnalysisListItem(
             analysis_id=r.id,
             record_id=r.record_id,
@@ -131,6 +149,10 @@ def get_user_analyses(
         )
         for r in rows
     ]
+    return {
+        "total": total,
+        "items": items
+    }
 
 
 @router.get("/users/{user_id}/analyses/{analysis_id}", response_model=AnalysisResponse, summary="分析详情（Admin视角）")
@@ -155,7 +177,7 @@ def get_analysis_detail_admin(
 # Alerts
 # ─────────────────────────────────────────────────────────────────────────────
 
-@router.get("/alerts", response_model=list[AlertResponse], summary="预警列表")
+@router.get("/alerts", response_model=AlertListResponse, summary="预警列表")
 def list_alerts(
     unread_only: bool = Query(False, description="只看未读"),
     skip: int = Query(0, ge=0),
@@ -166,7 +188,21 @@ def list_alerts(
     q = db.query(Alert)
     if unread_only:
         q = q.filter(Alert.is_read == False)
-    return q.order_by(Alert.created_at.desc()).offset(skip).limit(limit).all()
+    total = q.count()
+    rows = (
+        q.order_by(Alert.created_at.desc())
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+    items = [
+        AlertResponse.model_validate(r)
+        for r in rows
+    ]
+    return {
+        "total": total,
+        "items": items
+    }
 
 
 @router.put("/alerts/{alert_id}/read", response_model=AlertResponse, summary="标记预警为已读")

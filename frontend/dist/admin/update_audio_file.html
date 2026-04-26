@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <title>上传音频 - MindChat</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="stylesheet" type="text/css" href="../css/materialdesignicons.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../js/webuploader/webuploader.css">
+    <link rel="stylesheet" type="text/css" href="../css/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/style.min.css">
+    <style>
+        .example {
+            position: relative;
+            background-color: #fafafa;
+        }
+
+        #uploader .queueList {
+            border: 3px dashed #ececec;
+        }
+
+        #uploader .queueList.filled {
+            padding: 17px;
+            margin: 0;
+            border: 3px dashed transparent;
+        }
+
+        #uploader .queueList.webuploader-dnd-over {
+            border: 3px dashed #999999;
+        }
+
+        #uploader p {
+            margin: 0;
+        }
+
+        .element-invisible {
+            position: absolute !important;
+            clip: rect(1px 1px 1px 1px);
+            /* IE6, IE7 */
+            clip: rect(1px, 1px, 1px, 1px);
+        }
+
+        #uploader .uploader-placeholder {
+            min-height: 350px;
+            padding-top: 100px;
+            text-align: center;
+            color: #cccccc;
+            position: relative;
+        }
+
+        #uploader .uploader-placeholder:before {
+            font-family: "Material Design Icons";
+            font-size: 50px;
+            content: "\f0552";
+        }
+
+        #uploader .uploader-placeholder .webuploader-pick {
+            font-size: 18px;
+            line-height: 44px;
+            padding: 0 30px;
+            *width: 120px;
+            color: #fff;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        }
+
+        #uploader .uploader-placeholder .flashTip {
+            color: #666666;
+            font-size: 12px;
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            bottom: 20px;
+        }
+
+        #uploader .uploader-placeholder .flashTip a {
+            color: #0785d1;
+            text-decoration: none;
+        }
+
+        #uploader .uploader-placeholder .flashTip a:hover {
+            text-decoration: underline;
+        }
+
+        #uploader .filelist {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #uploader .filelist:after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+            clear: both;
+        }
+
+        #uploader .filelist li {
+            width: 110px;
+            height: 110px;
+            text-align: center;
+            margin: 0 8px 20px 0;
+            position: relative;
+            display: inline;
+            float: left;
+            overflow: hidden;
+            font-size: 12px;
+
+            background: #fafafa;
+            background-image:
+                linear-gradient(45deg, rgba(0, 0, 0, .035) 25%, transparent 0, transparent 75%, rgba(0, 0, 0, .035) 0),
+                linear-gradient(45deg, rgba(0, 0, 0, .035) 25%, transparent 0, transparent 75%, rgba(0, 0, 0, .035) 0);
+            background-position: 0 0, 15px 15px;
+            background-size: 30px 30px;
+        }
+
+        #uploader .filelist li p.log {
+            position: relative;
+            top: -45px;
+        }
+
+        #uploader .filelist li p.title {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            top: 5px;
+            text-indent: 5px;
+            text-align: left;
+        }
+
+        #uploader .filelist li p.progress {
+            position: absolute;
+            width: 100%;
+            height: 8px;
+            bottom: 0;
+            left: 0;
+            overflow: hidden;
+            z-index: 50;
+            margin: 0;
+            -webkit-border-radius: 0;
+            border-radius: 0;
+            background-color: transparent;
+            -webkit-box-shadow: 0 0 0;
+        }
+
+        #uploader .filelist li p.imgWrap {
+            position: relative;
+            z-index: 2;
+            line-height: 110px;
+            vertical-align: middle;
+            overflow: hidden;
+            width: 110px;
+            height: 110px;
+
+            -webkit-transform-origin: 50% 50%;
+            -moz-transform-origin: 50% 50%;
+            -o-transform-origin: 50% 50%;
+            -ms-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
+
+            -webit-transition: 200ms ease-out;
+            -moz-transition: 200ms ease-out;
+            -o-transition: 200ms ease-out;
+            -ms-transition: 200ms ease-out;
+            transition: 200ms ease-out;
+        }
+
+        #uploader .filelist li img {
+            width: 100%;
+            vertical-align: bottom;
+        }
+
+        #uploader .filelist li p.error {
+            background: #f43838;
+            color: #fff;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 28px;
+            line-height: 28px;
+            width: 100%;
+            z-index: 100;
+        }
+
+        #uploader .filelist li .success {
+            display: block;
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 0px;
+            height: 0px;
+            border-bottom: 40px solid #33cabb;
+            border-left: 40px solid transparent;
+            z-index: 200;
+        }
+
+        #uploader .filelist li .success:after {
+            font-family: "Material Design Icons";
+            font-size: 22px;
+            content: "\F012C";
+            position: absolute;
+            right: 0px;
+            bottom: -43px;
+            color: #fff;
+        }
+
+        #uploader .filelist div.file-panel {
+            position: absolute;
+            height: 0;
+            filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#80000000', endColorstr='#80000000')\0;
+            background: rgba(0, 0, 0, 0.5);
+            width: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            z-index: 300;
+        }
+
+        #uploader .filelist div.file-panel span {
+            width: 24px;
+            height: 24px;
+            display: inline;
+            float: right;
+            overflow: hidden;
+            margin: 5px 1px 1px;
+            cursor: pointer;
+            font-family: "Material Design Icons";
+            font-size: 14px;
+            color: #FFF;
+            -webkit-transition: .2s linear;
+            transition: .2s linear
+        }
+
+        #uploader .filelist div.file-panel span.rotateLeft,
+        #uploader .filelist div.file-panel span.rotateRight {
+            display: none;
+        }
+
+        #uploader .filelist div.file-panel span.rotateLeft:after {
+            content: "\F0465";
+        }
+
+        #uploader .filelist div.file-panel span.rotateRight:after {
+            content: "\F0467";
+        }
+
+        #uploader .filelist div.file-panel span.cancel:after {
+            content: "\F01B4";
+        }
+
+        #uploader .filelist div.file-panel span.rotateLeft:hover,
+        #uploader .filelist div.file-panel span.rotateRight:hover,
+        #uploader .filelist div.file-panel span.cancel:hover {
+            color: #33cabb;
+        }
+
+        #uploader .statusBar {
+            height: 63px;
+            border-top: 1px solid rgba(77, 82, 89, 0.05);
+            padding: 0 20px;
+            line-height: 63px;
+            vertical-align: middle;
+            position: relative;
+        }
+
+        #uploader .statusBar .progress {
+            width: 198px;
+            display: inline-block;
+            text-align: center;
+            position: relative;
+            margin: 0 10px 0 0;
+        }
+
+        #uploader .statusBar .info {
+            display: inline-block;
+        }
+
+        #uploader .statusBar .btns {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            line-height: 36px;
+        }
+
+        #filePickerBtn {
+            display: inline-block;
+            float: left;
+        }
+
+        #uploader .statusBar .btns .webuploader-pick,
+        #uploader .statusBar .btns .uploadBtn,
+        #uploader .statusBar .btns .uploadBtn.state-uploading,
+        #uploader .statusBar .btns .uploadBtn.state-paused {
+            background: #fcfdfe;
+            border: 1px solid #ebebeb;
+            color: #8b95a5;
+            padding: 0px 12px;
+            display: inline-block;
+            border-radius: 2px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            float: left;
+            line-height: 36px;
+        }
+
+        #uploader .statusBar .btns .webuploader-pick-hover,
+        #uploader .statusBar .btns .uploadBtn.state-uploading:hover,
+        #uploader .statusBar .btns .uploadBtn.state-paused:hover {
+            background-color: #f9fafb;
+            border-color: #ebebeb;
+            color: #4d5259
+        }
+
+        #uploader .statusBar .btns .uploadBtn {
+            background: #33cabb;
+            color: #fff;
+            border-color: #33cabb;
+        }
+
+        #uploader .statusBar .btns .uploadBtn:hover {
+            background: #52d3c7;
+            border-color: #52d3c7;
+            color: #fff;
+        }
+
+        #uploader .statusBar .btns .uploadBtn.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        i.file-preview {
+            display: block;
+            width: 110px;
+            height: 110px;
+            font-size: 35px;
+            line-height: 110px;
+        }
+
+        [data-theme='dark'] #uploader,
+        [data-theme|='translucent'] #uploader {
+            background-color: rgba(var(--bs-white-rgb), .2);
+            border-color: rgba(var(--bs-white-rgb), .2);
+        }
+
+        [data-theme='dark'] #uploader .queueList,
+        [data-theme|='translucent'] #uploader .queueList {
+            border-color: rgba(var(--bs-white-rgb), .2);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <div class="col-lg-12">
+                <div class="card">
+                    <header class="card-header">
+                        <div class="card-title">上传音频</div>
+                    </header>
+                    <div class="card-body">
+
+                        <div id="uploader" class="example">
+                            <input type="hidden" name="pics" value="" />
+                            <div class="queueList">
+                                <div id="dndArea" class="uploader-placeholder">
+                                    <div id="filePicker"></div>
+                                    <p>或将附件拖到这里</p>
+                                </div>
+                            </div>
+                            <div class="statusBar" style="display:none;">
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped active">0%</div>
+                                </div>
+                                <div class="info"></div>
+                                <div class="btns">
+                                    <div id="filePickerBtn"></div>
+                                    <div class="uploadBtn">开始上传</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/popper.min.js"></script>
+    <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../js/webuploader/webuploader.min.js"></script>
+    <script type="text/javascript" src="../js/main.min.js"></script>
+    <script type="text/javascript" src="../config.js"></script>
+
+    <script type="text/javascript">
+        var UPLOAD_AUDIO_FILE = `${base_url}/api/analysis/upload`;
+
+        jQuery(function () {
+            var $ = jQuery,
+
+                $wrap = $('#uploader'),
+
+                // 文件列表容器
+                $queue = $('<ul class="filelist"></ul>').appendTo($wrap.find('.queueList')),
+
+                // 状态栏
+                $statusBar = $wrap.find('.statusBar'),
+
+                // 文件总体选择信息
+                $info = $statusBar.find('.info'),
+
+                // 上传按钮
+                $upload = $wrap.find('.uploadBtn'),
+
+                // 未选择文件时的占位区
+                $placeHolder = $wrap.find('.uploader-placeholder'),
+
+                // 总体进度条
+                $progress = $statusBar.find('.progress').hide(),
+
+                // 已添加的文件数量（从0开始，addFile后累加）
+                fileCount = 0,
+
+                // 已添加的文件总大小
+                fileSize = 0,
+
+                ratio = window.devicePixelRatio || 1,
+                thumbnailWidth = 110 * ratio,
+                thumbnailHeight = 110 * ratio,
+
+                state = '',
+
+                percentages = {},
+
+                supportTransition = (function () {
+                    var s = document.createElement('p').style,
+                        r = 'transition' in s ||
+                            'WebkitTransition' in s ||
+                            'MozTransition' in s ||
+                            'msTransition' in s ||
+                            'OTransition' in s;
+                    s = null;
+                    return r;
+                })(),
+
+                acceptExtensions = 'wma,wav,mp3,ogg,flac,aac,m4a',
+
+                // 最多上传1个文件
+                fileNumLimit = 1,
+
+                fileSizeLimit = 50 * 1024 * 1024,
+                fileSingleSizeLimit = 50 * 1024 * 1024,
+
+                uploader;
+
+            if (!WebUploader.Uploader.support()) {
+                alert('Web Uploader 不支持您的浏览器！如果你使用的是IE浏览器，请尝试升级 flash 播放器');
+                throw new Error('WebUploader does not support the browser you are using.');
+            }
+
+            uploader = WebUploader.create({
+                pick: {
+                    id: '#filePicker',
+                    label: '点击选择文件'
+                },
+                dnd: '#uploader .queueList',
+                paste: document.body,
+
+                swf: '/js/webuploader/Uploader.swf',
+
+                disableGlobalDnd: true,
+
+                // 关闭分片，直接整文件上传
+                chunked: false,
+
+                duplicate: false,
+
+                server: UPLOAD_AUDIO_FILE,
+                fileVal: 'file',
+                formData: {},
+
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('mindchat_token')
+                },
+
+                compress: false,
+                fileNumLimit: fileNumLimit,
+                fileSizeLimit: fileSizeLimit,
+                fileSingleSizeLimit: fileSingleSizeLimit
+            });
+
+            setState('pedding');
+
+            // 当有文件添加进来时执行，负责 view 的创建
+            function addFile(file) {
+                var $li = $('<li id="' + file.id + '">' +
+                    '<p class="title">' + file.name + '</p>' +
+                    '<p class="imgWrap"></p>' +
+                    '<p class="progress"><span class="progress-bar progress-bar-striped active"></span></p>' +
+                    '</li>'),
+
+                    $btns = $('<div class="file-panel">' +
+                        '<span class="cancel"></span>' +
+                        '<span class="rotateRight"></span>' +
+                        '<span class="rotateLeft"></span></div>').appendTo($li),
+                    $prgress = $li.find('p.progress .progress-bar'),
+                    $wrap2 = $li.find('p.imgWrap'),
+                    $info2 = $('<p class="error"></p>'),
+
+                    showError = function (code) {
+                        var text;
+                        switch (code) {
+                            case 'exceed_size':
+                                text = '文件大小超出';
+                                break;
+                            case 'interrupt':
+                                text = '上传暂停';
+                                break;
+                            case 'http':
+                                text = 'http请求错误';
+                                break;
+                            case 'not_allow_type':
+                                text = '文件格式不允许';
+                                break;
+                            default:
+                                text = '上传失败，请重试';
+                                break;
+                        }
+                        $info2.text(text).appendTo($li);
+                    };
+
+                if (file.getStatus() === 'invalid') {
+                    showError(file.statusText);
+                } else {
+                    $wrap2.text('预览中');
+
+                    // 音频文件不是图片，直接显示对应图标
+                    var extArr = {
+                        'zip': 'zip-box', 'rar': 'zip-box', '7z': 'zip-box',
+                        'doc': 'file-word', 'xls': 'file-excel', 'txt': 'file-document',
+                        'ppt': 'file-powerpoint', 'xlsx': 'file-excel', 'pdf': 'file-pdf',
+                        'rm': 'file-video', 'rmvb': 'file-video', 'mp4': 'file-video',
+                        'mp3': 'file-music', 'wma': 'file-music', 'wav': 'file-music',
+                        'ogg': 'file-music', 'flac': 'file-music', 'aac': 'file-music', 'm4a': 'file-music',
+                        'exe': 'file', 'lrc': 'file', 'iso': 'file', 'xml': 'file-xml',
+                        'php': 'language-php', 'py': 'language-python', 'go': 'language-go',
+                        'c': 'language-c', 'cpp': 'language-cpp', 'cs': 'language-csharp',
+                        'js': 'language-javascript', 'html': 'internet-explorer', 'css': 'language-css3',
+                    };
+                    var extLower = file.ext ? file.ext.toLowerCase() : '';
+                    var thisFileExt = extArr[extLower] || 'file';
+
+                    $wrap2.empty().addClass('notimage').append(
+                        '<i class="file-preview mdi mdi-' + thisFileExt + '"></i>' +
+                        '<span class="file-title" title="' + file.name + '">' + file.name + '</span>'
+                    );
+
+                    percentages[file.id] = [file.size, 0];
+                    file.rotation = 0;
+
+                    // 检查文件格式
+                    if (!file.ext || acceptExtensions.indexOf(extLower) === -1) {
+                        showError('not_allow_type');
+                    }
+                }
+
+                file.on('statuschange', function (cur, prev) {
+                    if (prev === 'progress') {
+                        $prgress.hide().width(0);
+                    } else if (prev === 'queued') {
+                        $li.off('mouseenter mouseleave');
+                        $btns.remove();
+                    }
+
+                    if (cur === 'error' || cur === 'invalid') {
+                        showError(file.statusText);
+                        percentages[file.id][1] = 1;
+                    } else if (cur === 'interrupt') {
+                        showError('interrupt');
+                    } else if (cur === 'queued') {
+                        percentages[file.id][1] = 0;
+                    } else if (cur === 'progress') {
+                        $info2.remove();
+                        $prgress.css('display', 'block');
+                    } else if (cur === 'complete') {
+                        $li.append('<span class="success"></span>');
+                    }
+
+                    $li.removeClass('state-' + prev).addClass('state-' + cur);
+                });
+
+                $li.on('mouseenter', function () {
+                    $btns.stop().animate({ height: 30 });
+                });
+
+                $li.on('mouseleave', function () {
+                    $btns.stop().animate({ height: 0 });
+                });
+
+                $btns.on('click', 'span', function () {
+                    var index = $(this).index(), deg;
+                    switch (index) {
+                        case 0:
+                            uploader.removeFile(file);
+                            return;
+                        case 1:
+                            file.rotation += 90;
+                            break;
+                        case 2:
+                            file.rotation -= 90;
+                            break;
+                    }
+
+                    if (supportTransition) {
+                        deg = 'rotate(' + file.rotation + 'deg)';
+                        $wrap2.css({
+                            '-webkit-transform': deg,
+                            '-mos-transform': deg,
+                            '-o-transform': deg,
+                            'transform': deg
+                        });
+                    } else {
+                        $wrap2.css('filter', 'progid:DXImageTransform.Microsoft.BasicImage(rotation=' + (~~((file.rotation / 90) % 4 + 4) % 4) + ')');
+                    }
+                });
+
+                $li.appendTo($queue);
+            }
+
+            function removeFile(file) {
+                var $li = $('#' + file.id);
+                delete percentages[file.id];
+                updateTotalProgress();
+                $li.off().find('.file-panel').off().end().remove();
+            }
+
+            function updateTotalProgress() {
+                var loaded = 0,
+                    total = 0,
+                    span = $progress.find('.progress-bar'),
+                    percent;
+
+                $.each(percentages, function (k, v) {
+                    total += v[0];
+                    loaded += v[0] * v[1];
+                });
+
+                percent = total ? loaded / total : 0;
+                span.text(Math.round(percent * 100) + '%');
+                span.css('width', Math.round(percent * 100) + '%');
+                updateStatus();
+            }
+
+            function setState(val) {
+                var file, stats;
+
+                if (val === state) {
+                    return;
+                }
+
+                $upload.removeClass('state-' + state);
+                $upload.addClass('state-' + val);
+                state = val;
+
+                switch (state) {
+                    case 'pedding':
+                        $placeHolder.removeClass('element-invisible');
+                        $queue.parent().removeClass('filled');
+                        $queue.hide();
+                        $statusBar.addClass('element-invisible');
+                        uploader.refresh();
+                        break;
+
+                    case 'ready':
+                        $placeHolder.addClass('element-invisible');
+                        $('#filePickerBtn').removeClass('element-invisible');
+                        $queue.parent().addClass('filled');
+                        $queue.show();
+                        $statusBar.removeClass('element-invisible');
+                        uploader.refresh();
+                        break;
+
+                    case 'uploading':
+                        $progress.show();
+                        $upload.text('暂停上传');
+                        break;
+
+                    case 'paused':
+                        $progress.show();
+                        $upload.text('继续上传');
+                        break;
+
+                    case 'confirm':
+                        $progress.hide();
+                        $upload.text('开始上传').addClass('disabled');
+
+                        stats = uploader.getStats();
+                        if (stats.successNum && !stats.uploadFailNum) {
+                            setState('finish');
+                            return;
+                        }
+                        break;
+
+                    case 'finish':
+                        stats = uploader.getStats();
+                        if (!stats.successNum) {
+                            state = 'done';
+                            location.reload();
+                        }
+                        break;
+                }
+
+                updateStatus();
+
+                if (!getQueueCount()) {
+                    $upload.addClass('disabled');
+                } else {
+                    $upload.removeClass('disabled');
+                }
+            }
+
+            function updateStatus() {
+                var text = '', stats;
+
+                if (state === 'ready') {
+                    text = '选中' + fileCount + '个文件，共' + WebUploader.formatSize(fileSize) + '。';
+                } else if (state === 'confirm') {
+                    stats = uploader.getStats();
+                    if (stats.uploadFailNum) {
+                        text = '已成功上传' + stats.successNum + '个文件，' +
+                            stats.uploadFailNum + '个文件上传失败，<a class="retry" href="#">重新上传</a>失败文件或<a class="ignore" href="#">忽略</a>';
+                    }
+                } else {
+                    stats = uploader.getStats();
+                    text = '共' + fileCount + '个（' + WebUploader.formatSize(fileSize) + '），已上传' + stats.successNum + '个';
+                    if (stats.uploadFailNum) {
+                        text += '，失败' + stats.uploadFailNum + '个';
+                    }
+                }
+
+                $info.html(text);
+            }
+
+            uploader.onFileQueued = function (file) {
+                fileCount++;
+                fileSize += file.size;
+
+                if (fileCount === 1) {
+                    $placeHolder.addClass('element-invisible');
+                    $statusBar.show();
+                }
+
+                addFile(file);
+                setState('ready');
+                updateTotalProgress();
+            };
+
+            uploader.onFileDequeued = function (file) {
+                fileCount--;
+                fileSize -= file.size;
+
+                if (!fileCount) {
+                    setState('pedding');
+                }
+
+                removeFile(file);
+                updateTotalProgress();
+            };
+
+            uploader.on('filesQueued', function () {
+                if (!uploader.isInProgress() && (state === 'pedding' || state === 'finish' || state === 'confirm' || state === 'ready')) {
+                    setState('ready');
+                }
+                updateTotalProgress();
+            });
+
+            uploader.on('all', function (type) {
+                switch (type) {
+                    case 'uploadFinished':
+                        setState('confirm');
+                        break;
+                    case 'startUpload':
+                        setState('uploading');
+                        break;
+                    case 'stopUpload':
+                        setState('paused');
+                        break;
+                }
+            });
+
+            uploader.onUploadProgress = function (file, percentage) {
+                var $li = $('#' + file.id),
+                    $percent = $li.find('.progress .progress-bar');
+
+                $percent.css('width', percentage * 100 + '%');
+                percentages[file.id][1] = percentage;
+                updateTotalProgress();
+            };
+
+            uploader.onUploadSuccess = function (file, response) {
+                console.log('[MindChat] 上传成功，后端响应：', response);
+
+                // 将 task_id 写入隐藏 input，方便后续提交
+                var $input_file = $('#uploader').find('input[type="hidden"]');
+                if (response && response.task_id) {
+                    $input_file.val(response.task_id);
+                    console.log('[MindChat] task_id：', response.task_id);
+                    // 如需跳转到结果页，可在此处跳转，例如：
+                    // window.location.href = '/result.html?task_id=' + response.task_id;
+                } else if (response && response.id) {
+                    $input_file.val(response.id);
+                }
+            };
+
+            uploader.onUploadError = function (file, reason) {
+                console.error('[MindChat] 上传失败，文件：', file.name, '原因：', reason);
+                alert('文件 "' + file.name + '" 上传失败，请检查网络或联系管理员。\n错误信息：' + reason);
+            };
+
+            uploader.onError = function (code) {
+                if (code === 'Q_EXCEED_NUM_LIMIT') {
+                    alert('最多上传 ' + fileNumLimit + ' 个文件');
+                } else if (code === 'F_DUPLICATE') {
+                    alert('文件已存在队列中');
+                } else if (code === 'Q_TYPE_DENIED') {
+                    alert('文件类型不满足，仅支持：' + acceptExtensions);
+                } else if (code === 'F_EXCEED_SIZE') {
+                    alert('文件大小不能超过 ' + (fileSingleSizeLimit / (1024 * 1024)) + ' MB');
+                } else if (code === 'Q_EXCEED_SIZE_LIMIT') {
+                    alert('添加的文件总大小不能超过 ' + (fileSizeLimit / (1024 * 1024)) + ' MB');
+                }
+            };
+
+            $upload.on('click', function () {
+                if ($(this).hasClass('disabled')) {
+                    return false;
+                }
+
+                if (state === 'ready') {
+                    uploader.upload();
+                } else if (state === 'paused') {
+                    uploader.upload();
+                } else if (state === 'uploading') {
+                    uploader.stop();
+                }
+            });
+
+            $info.on('click', '.retry', function () {
+                uploader.retry();
+            });
+
+            $info.on('click', '.ignore', function () {
+                alert('todo');
+            });
+
+            function getQueueCount() {
+                var file, i, status, readyFile = 0, files = uploader.getFiles();
+                for (i = 0; file = files[i++];) {
+                    status = file.getStatus();
+                    if (status === 'inited' || status === 'queued' || status === 'uploading' || status === 'progress') readyFile++;
+                }
+                return readyFile;
+            }
+
+            $upload.addClass('state-' + state);
+            updateTotalProgress();
+        });
+    </script>
+</body>
+
+</html>

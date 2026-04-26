@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+  <title>数据看板</title>
+  <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="stylesheet" type="text/css" href="./css/materialdesignicons.min.css">
+  <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="./css/animate.min.css">
+  <link rel="stylesheet" type="text/css" href="./css/style.min.css">
+</head>
+
+<body>
+  <div class="container-fluid">
+
+    <div class="row">
+
+      <div class="col-md-12 col-xl-4">
+        <div class="card bg-primary text-white">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <span class="avatar-md rounded-circle bg-white bg-opacity-25 avatar-box">
+                <i class="mdi mdi-account fs-4"></i>
+              </span>
+              <span class="fs-4 scroll-numbers" id="total_users"></span>
+            </div>
+            <div class="text-end">总用户数</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-12 col-xl-4">
+        <div class="card bg-success text-white">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <span class="avatar-md rounded-circle bg-white bg-opacity-25 avatar-box">
+                <i class="mdi mdi-format-list-bulleted-type fs-4"></i>
+              </span>
+              <span class="fs-4 scroll-numbers" id="total_analyses"></span>
+            </div>
+            <div class="text-end">分析条目</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-12 col-xl-4">
+        <div class="card bg-danger text-white">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <span class="avatar-md rounded-circle bg-white bg-opacity-25 avatar-box">
+                <i class="mdi mdi-bell-badge fs-4"></i>
+              </span>
+              <span class="fs-4 scroll-numbers" id="unread_alerts"></span>
+            </div>
+            <div class="text-end">未读预警</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">情绪分布</div>
+          </div>
+          <div class="card-body">
+            <canvas id="emotion_chart" width="360" height="360"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">抑郁预警</div>
+          </div>
+          <div class="card-body">
+            <canvas id="depression_chart" width="400" height="250"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>s
+
+  </div>
+
+  <script type="text/javascript" src="./js/jquery.min.js"></script>
+  <script type="text/javascript" src="./js/popper.min.js"></script>
+  <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="./js/chart.min.js"></script>
+  <script type="text/javascript" src="./js/lyear-loading.js"></script>
+  <script type="text/javascript" src="./js/bootstrap-notify.min.js"></script>
+  <script type="text/javascript" src="./config.js"></script>
+  <!-- 数字动态滚动增加效果 -->
+  <script type="text/javascript" src="./js/scroll-numbers.js"></script>
+  <!--引入chart插件js-->
+  <script type="text/javascript" src="./js/main.min.js"></script>
+  <script type="text/javascript" src="./dash.js"></script>
+</body>
+
+</html>

@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import List
 from datetime import datetime
 
 
@@ -6,10 +7,6 @@ class UserProfileUpdate(BaseModel):
     gender: str | None = None
     age: int | None = Field(None, ge=1, le=120)
     phone: str | None = None
-
-
-class ChangePasswordUpdate(BaseModel):
-    state: bool | None = None
 
 
 class UserProfile(BaseModel):
@@ -26,11 +23,6 @@ class UserProfile(BaseModel):
         from_attributes = True
 
 
-class ChangePassword(BaseModel):
-    old_password: str
-    new_password: str
-
-
 class AdminUserListItem(BaseModel):
     id: int
     username: str
@@ -45,5 +37,19 @@ class AdminUserListItem(BaseModel):
         from_attributes = True
 
 
+class AdminUserListResponse(BaseModel):
+    total: int
+    items: List[AdminUserListItem]
+
+
 class AdminUserStatusUpdate(BaseModel):
     is_active: bool
+
+
+class ChangePasswordUpdate(BaseModel):
+    state: bool | None = None
+
+
+class ChangePassword(BaseModel):
+    old_password: str
+    new_password: str

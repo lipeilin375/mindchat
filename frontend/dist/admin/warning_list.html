@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+  <title>预警列表</title>
+  <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="stylesheet" type="text/css" href="../css/materialdesignicons.min.css">
+  <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="../css/animate.min.css">
+  <link rel="stylesheet" type="text/css" href="../css/style.min.css">
+  <link href="//unpkg.com/layui@2.13.5/dist/css/layui.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <header class="card-header">
+            <div class="card-title">预警列表</div>
+          </header>
+          <div class="card-body">
+
+            <div class="table-responsive">
+
+              <table id="warningTable" lay-filter="warningTableFilter"></table>
+
+              <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h6 class="modal-title" id="alertModalLabel">预警详情</h6>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div>
+                        <h5 class="mb-1">
+                          用户名：<span id="detail_username"></span>
+                        </h5>
+                        <small class="text-muted">
+                          用户ID：<span id="detail_user_id">-</span>
+                        </small>
+                      </div>
+
+                      <div>
+                        <span id="detail_role" class="badge bg-dark"></span>
+                        <span id="detail_status" class="badge bg-success">启用</span>
+                      </div>
+
+                      <hr>
+                      <div class="row g-3">
+
+                        <!-- 性别 -->
+                        <div class="col-md-3">
+                          <div class="p-3 border rounded">
+                            <div class="text-muted small">性别</div>
+                            <div class="fw-bold" id="detail_gender">-</div>
+                          </div>
+                        </div>
+
+                        <!-- 年龄 -->
+                        <div class="col-md-3">
+                          <div class="p-3 border rounded">
+                            <div class="text-muted small">年龄</div>
+                            <div class="fw-bold" id="detail_age">-</div>
+                          </div>
+                        </div>
+
+                        <!-- 电话 -->
+                        <div class="col-md-3">
+                          <div class="p-3 border rounded">
+                            <div class="text-muted small">电话</div>
+                            <div class="fw-bold" id="detail_phone">-</div>
+                          </div>
+                        </div>
+
+                        <!-- 创建时间 -->
+                        <div class="col-md-3">
+                          <div class="p-3 border rounded">
+                            <div class="text-muted small">创建时间</div>
+                            <div class="fw-bold" id="detail_created_at">-</div>
+                          </div>
+                        </div>
+
+                      </div>
+
+                      <hr>
+
+                      <p><strong>主要情绪:</strong> <span id="emotion_primary_emotion" class="layui-badge"></span></p>
+                      <p><strong>抑郁程度:</strong> <span id="emotion_depression_level"></span></p>
+                      <p><strong>PHQ-9评分:</strong> <span id="emotion_phq_score"></span></p>
+                      <p><strong>分析时间:</strong> <span id="emotion_created_at"></span></p>
+                      <canvas id="emotion_distribution_chart" width="5rem" height="5rem"></canvas>
+                      <hr>
+                      <h6>ASR转录文本:</h6>
+                      <p id="emotion_ASR_text"></p>
+                      <hr>
+                      <h6>分析结果:</h6>
+                      <pre id="emotion_analysis_result"></pre>
+                      <hr>
+                      <h6>分析建议:</h6>
+                      <div class="accordion" id="accordionSuggestion">
+
+                      </div>
+
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <script type="text/html" id="toolbarAlertTpl">
+                <button class="layui-btn layui-btn-xs layui-btn-info" lay-event="detail">
+                  查看详情
+                </button>
+              </script>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="//unpkg.com/layui@2.13.5/dist/layui.js"></script>
+  <script type="text/javascript" src="../js/jquery.min.js"></script>
+  <script type="text/javascript" src="../js/popper.min.js"></script>
+  <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../js/chart.min.js"></script>
+  <script type="text/javascript" src="../js/lyear-loading.js"></script>
+  <script type="text/javascript" src="../js/bootstrap-notify.min.js"></script>
+  <script type="text/javascript" src="../config.js"></script>
+  <!-- 数字动态滚动增加效果 -->
+  <script type="text/javascript" src="../js/scroll-numbers.js"></script>
+  <script type="text/javascript" src="../js/main.min.js"></script>
+  <script type="text/javascript" src="./warning_list.js"></script>
+</body>
+
+</html>

@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import List
 import json
 
 
@@ -58,6 +59,11 @@ class AnalysisListItem(BaseModel):
         from_attributes = True
 
 
+class AnalysisListResponse(BaseModel):
+    total: int
+    items: List[AnalysisListItem]
+
+
 class AlertResponse(BaseModel):
     id: int
     user_id: int
@@ -69,6 +75,11 @@ class AlertResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class AlertListResponse(BaseModel):
+    total: int
+    items: List[AlertResponse]
 
 
 class AdminStatsResponse(BaseModel):

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <title>用户注册 - MindChat</title>
+    <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="stylesheet" type="text/css" href="./css/materialdesignicons.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/animate.min.css">
+    <link rel="stylesheet" href=".js/jquery-tagsinput/jquery.tagsinput.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/style.min.css">
+</head>
+
+<body class="bg-white overflow-x-hidden">
+    <div class="row bg-white vh-100 g-0">
+        <div class="col-md-6 col-lg-7 col-xl-8 d-none d-md-block"
+            style="background-image: url(images/login-bg-1.jpg); background-size: cover; background-position: center;">
+        </div>
+
+        <div class="col-md-6 col-lg-5 col-xl-4 align-self-center">
+            <div class="p-4 p-lg-5">
+                <h3 class="text-center mb-4">欢迎注册 MindChat</h3>
+
+                <form action="#" method="post" class="signin-form needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">姓名</label>
+                        <input type="text" class="form-control" id="username" placeholder="请输入姓名" required>
+                        <div class="invalid-feedback">请输入姓名</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">密码</label>
+                        <input type="password" class="form-control" id="password" placeholder="请输入密码" required>
+                        <div class="invalid-feedback">请输入密码</div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="confirmpwd" class="form-label">确认密码</label>
+                        <input type="password" class="form-control" placeholder="确认密码" name="confirmpwd" id="confirmpwd"
+                            required>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="sex" class="form-label">性别</label>
+                        <div class="form-controls">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sex" value="1" id="sex1">
+                                <label class="form-check-label" for="sex1">男</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sex" value="2" id="sex2">
+                                <label class="form-check-label" for="sex2">女</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="age" class="form-label">年龄</label>
+                        <input type="text" class="form-control" id="age" placeholder="请输入年龄(5-90岁)" max="90" min="5"
+                            required>
+                        <div class="invalid-feedback">请输入年龄(5-90岁)</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">联系方式</label>
+                        <input type="text" class="form-control" id="phone" placeholder="请输入联系方式" maxlength="11"
+                            minlength="11" required>
+                        <div class="invalid-feedback">请输入联系方式</div>
+                    </div>
+
+                    <div class="mb-3 d-grid">
+                        <button class="btn btn-primary" type="submit">注册</button>
+                        <button class="btn btn-link" type="button" onclick="location.href='login.html'">已有账号？立即登录</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
+    <script type="text/javascript" src="./js/popper.min.js"></script>
+    <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./js/lyear-loading.js"></script>
+    <script type="text/javascript" src="./js/bootstrap-notify.min.js"></script>
+    <script type="text/javascript" src="./config.js"></script>
+    <script type="text/javascript">
+        var loader;
+        var REGISTER_API_URL = `${base_url}/api/auth/register`;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            localStorage.removeItem('mindchat_token');
+            localStorage.removeItem('mindchat_user');
+        });
+
+        function showNotify(type, message, enterAnimation) {
+            $.notify({
+                message: message
+            }, {
+                type: type,
+                placement: {
+                    from: 'top',
+                    align: 'right'
+                },
+                z_index: 10800,
+                delay: 1800,
+                animate: {
+                    enter: enterAnimation,
+                    exit: 'animate__animated animate__fadeOutDown'
+                }
+            });
+        }
+
+        $(document).ajaxStart(function () {
+            $('button:submit').html('注册中...').attr('disabled', true);
+            loader = $('button:submit').lyearloading({
+                opacity: 0.2,
+                spinnerSize: 'nm'
+            });
+        }).ajaxStop(function () {
+            if (loader) {
+                loader.destroy();
+            }
+            $('button:submit').html('注册').attr('disabled', false);
+        });
+
+        $('.signin-form').on('submit', function (event) {
+            event.preventDefault();
+
+            if (this.checkValidity() === false || $('input[name="sex"]:checked').length === 0 || $('#age').val() < 5 || $('#age').val() > 90 || $('#phone').val().length !== 11) {
+                event.stopPropagation();
+                $(this).addClass('was-validated');
+                return false;
+            }
+
+            if ($('#password').val() !== $('#confirmpwd').val()) {
+                showNotify('danger', '两次输入的密码不一致', 'animate__animated animate__shakeX');
+                $('#confirmpwd').val('');
+                return false;
+            }
+
+            var payload = {
+                username: $('#username').val().trim(),
+                password: $('#password').val(),
+                gender: $('input[name="sex"]:checked').val() - 1 ? "男" : "女",
+                age: $('#age').val().trim(),
+                phone: $('#phone').val().trim()
+            };
+
+            var ajaxOptions = {
+                url: REGISTER_API_URL,
+                method: 'POST',
+                timeout: 0,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify(payload)
+            };
+
+            $.ajax(ajaxOptions).done(function (response, textStatus, xhr) {
+                if (xhr.status === 201) {
+                    showNotify('success', '注册成功，正在跳转...', 'animate__animated animate__fadeInUp');
+                    localStorage.setItem('mindchat_token', response.access_token);
+                    localStorage.setItem('mindchat_user', JSON.stringify(response.user));
+                    setTimeout(function () {
+                        location.href = 'index.html';
+                    }, 1200);
+                    return;
+                }
+
+                showNotify('danger', '注册失败，请稍后重试', 'animate__animated animate__shakeX');
+            }).fail(function (xhr) {
+                if (xhr.status === 401 || xhr.status === 400) {
+                    var msg = (xhr.responseJSON && xhr.responseJSON.detail) ? xhr.responseJSON.detail : '用户名或密码错误';
+                    showNotify('danger', msg, 'animate__animated animate__shakeX');
+                    $('#password').val('');
+                    return;
+                } else {
+                    var msg = (xhr.responseJSON && xhr.responseJSON.detail) ? xhr.responseJSON.detail[0].msg : '注册失败，请稍后重试';
+                    showNotify('danger', msg, 'animate__animated animate__shakeX');
+                    return;
+                }
+
+                showNotify('danger', '请求失败，请检查网络或后端服务', 'animate__animated animate__shakeX');
+            });
+
+            return false;
+        });
+    </script>
+</body>
+
+</html>

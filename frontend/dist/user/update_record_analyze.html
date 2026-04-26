@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+  <title>录音情绪分析 - 圆形录音按钮</title>
+  <link rel="stylesheet" type="text/css" href="../css/materialdesignicons.min.css">
+  <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="../css/animate.min.css">
+  <link rel="stylesheet" href="../js/bootstrap-table/bootstrap-table.min.css">
+  <link rel="stylesheet" type="text/css" href="../css/style.min.css">
+  <style>
+    /* 圆形录音按钮自定义样式 */
+    .round-record-btn {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #dc3545, #b02a37);
+      border: none;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), 0 0 0 4px rgba(220, 53, 69, 0.3);
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 20px auto;
+      cursor: pointer;
+      color: white;
+      font-weight: 500;
+      outline: none;
+      position: relative;
+    }
+
+    .round-record-btn:hover {
+      transform: scale(1.03);
+      background: linear-gradient(145deg, #c82333, #a71d2a);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25), 0 0 0 6px rgba(220, 53, 69, 0.4);
+    }
+
+    .round-record-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* 录音中脉冲动画 */
+    .round-record-btn.recording {
+      background: linear-gradient(145deg, #ff5e6b, #e03a4a);
+      box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.6);
+      }
+
+      70% {
+        box-shadow: 0 0 0 18px rgba(220, 53, 69, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+      }
+    }
+
+    .round-record-btn .mdi {
+      font-size: 48px;
+      margin-bottom: 4px;
+      transition: all 0.2s;
+    }
+
+    .round-record-btn .btn-text {
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+
+    /* 状态提示区域 */
+    .status-area {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      min-height: 60px;
+    }
+
+    .recording-tip {
+      color: #dc3545;
+      font-weight: 500;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    .upload-loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #dc3545;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <header class="card-header">
+            <div class="card-title">🎙️ 录音情绪分析</div>
+          </header>
+          <div class="card-body mx-auto" style="text-align: center;">
+            <!-- 圆形录音按钮 -->
+            <button id="recordingBtn" class="round-record-btn">
+              <span class="mdi mdi-microphone"></span>
+              <span class="btn-text">开始录音</span>
+            </button>
+
+            <!-- 状态与提示区域 -->
+            <div id="statusArea" class="status-area">
+              <span id="statusMsg" class="text-muted">⚡ 点击圆形按钮开始录音</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="../js/jquery.min.js"></script>
+  <script type="text/javascript" src="../js/popper.min.js"></script>
+  <script type="text/javascript" src="../js/chart.min.js"></script>
+  <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../js/lyear-loading.js"></script>
+  <script type="text/javascript" src="../js/main.min.js"></script>
+  <script type="text/javascript" src="../js/bootstrap-notify.min.js"></script>
+  <script type="text/javascript" src="../config.js"></script>
+  <script type="text/javascript" src="./analyze_record.js"></script>
+</body>
+
+</html>

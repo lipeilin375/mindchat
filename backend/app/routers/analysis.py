@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.emotion_analysis import EmotionAnalysis
 from app.models.audio_record import AudioRecord
-from app.schemas.analysis import AnalysisResponse, AnalysisListItem
+from app.schemas.analysis import AnalysisListResponse, AnalysisResponse, AnalysisListItem
 from app.services.analysis_service import process_voice_analysis
 from app.dependencies import get_current_user
 from app.models.user import User
@@ -33,13 +33,18 @@ async def upload_audio(
     return await process_voice_analysis(file, current_user.id, db)
 
 
-@router.get("/history", response_model=list[AnalysisListItem], summary="获取当前用户历史分析")
+@router.get("/history", response_model=AnalysisListResponse, summary="获取当前用户历史分析")
 def get_history(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    base_query = db.query(EmotionAnalysis).filter(
+        EmotionAnalysis.user_id == current_user.id
+    )
+    total = base_query.count()
+
     rows = (
         db.query(EmotionAnalysis)
         .filter(EmotionAnalysis.user_id == current_user.id)
@@ -48,7 +53,8 @@ def get_history(
         .limit(limit)
         .all()
     )
-    return [
+
+    items = [
         AnalysisListItem(
             analysis_id=r.id,
             record_id=r.record_id,
@@ -59,6 +65,10 @@ def get_history(
         )
         for r in rows
     ]
+    return {
+        "total": total,
+        "items": items
+    }
 
 
 @router.get("/{analysis_id}", response_model=AnalysisResponse, summary="获取单条分析详情")
