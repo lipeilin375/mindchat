@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     APP_TITLE: str = "语音情绪分析系统"
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = False
+    HF_ENDPOINT: str = "https://hf-mirror.com"
 
     # ── Database ─────────────────────────────────────
     DATABASE_URL: str = "sqlite:////app/data/emotion_app.db"
@@ -35,7 +36,7 @@ class Settings(BaseSettings):
 
     # ── Custom LLM (OpenRouter / any OpenAI-compatible API) ───
     # LLM_PROVIDER=custom to activate
-    CUSTOM_LLM_BASE_URL: str = "https://v1.neuroweave.asia/chat/completions"
+    CUSTOM_LLM_BASE_URL: str = "https://v1.mindchat.dpdns.org/chat/completions"
     CUSTOM_LLM_MODEL: str = "liquid/lfm-2.5-1.2b-instruct-20260120:free"
     CUSTOM_LLM_API_KEY: str = ""
 
