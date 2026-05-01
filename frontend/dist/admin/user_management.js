@@ -266,11 +266,11 @@ function showDetailModal(data) {
           templet: function (d) {
             let primary_emotion_badge = '';
             switch (d.primary_emotion) {
-              case 'joy': primary_emotion_badge = '<span class="layui-badge layui-bg-green">开心</span>'; break;
-              case 'sadness': primary_emotion_badge = '<span class="layui-badge layui-bg-blue">难过</span>'; break;
-              case 'anger': primary_emotion_badge = '<span class="layui-badge layui-bg-orange">生气</span>'; break;
+              case 'happy': primary_emotion_badge = '<span class="layui-badge layui-bg-green">开心</span>'; break;
+              case 'sad': primary_emotion_badge = '<span class="layui-badge layui-bg-blue">难过</span>'; break;
+              case 'angry': primary_emotion_badge = '<span class="layui-badge layui-bg-orange">生气</span>'; break;
               case 'neutral': primary_emotion_badge = '<span class="layui-badge layui-bg-gray">中性</span>'; break;
-              case 'disgust': primary_emotion_badge = '<span class="layui-badge layui-bg-red">厌恶</span>'; break;
+              case 'surprise': primary_emotion_badge = '<span class="layui-badge layui-bg-primary">惊讶</span>'; break;
               case 'fear': primary_emotion_badge = '<span class="layui-badge layui-bg-dark">恐惧</span>'; break;
               default: primary_emotion_badge = '<span class="layui-badge layui-bg-gray">未知</span>';
             }
@@ -380,20 +380,20 @@ function showEmotionModal(user_id, analysis_id) {
       mTitle.innerText = `分析详情`;
       let primaryEmotionText = "未知";
       switch (response.primary_emotion) {
-        case 'joy':
+        case 'happy':
           primaryEmotionText = "开心";
           break;
-        case 'sadness':
+        case 'sad':
           primaryEmotionText = "难过";
           break;
-        case 'anger':
+        case 'angry':
           primaryEmotionText = "生气";
           break;
         case 'neutral':
           primaryEmotionText = "中性";
           break;
-        case 'disgust':
-          primaryEmotionText = "厌恶";
+        case 'surprise':
+          primaryEmotionText = "惊讶";
           break;
         case 'fear':
           primaryEmotionText = "恐惧";
@@ -404,20 +404,20 @@ function showEmotionModal(user_id, analysis_id) {
       mPrimaryEmotion.innerText = primaryEmotionText;
       let primaryEmotionRGB = "bg-secondary"; // 默认灰色
       switch (response.primary_emotion) {
-        case 'joy':
+        case 'happy':
           primaryEmotionRGB = "layui-bg-green";
           break;
-        case 'sadness':
+        case 'sad':
           primaryEmotionRGB = "layui-bg-blue";
           break;
-        case 'anger':
+        case 'angry':
           primaryEmotionRGB = "layui-bg-orange";
           break;
         case 'neutral':
           primaryEmotionRGB = "layui-bg-gray";
           break;
-        case 'disgust':
-          primaryEmotionRGB = "layui-bg-red";
+        case 'surprise':
+          primaryEmotionRGB = "layui-bg-primary";
           break;
         case 'fear':
           primaryEmotionRGB = "layui-bg-dark";
@@ -490,7 +490,7 @@ function show_emotion_chart(emotion_scores, container) {
   if (modalChart) {
     modalChart.destroy();
   }
-  const labelsCN = ["开心", "难过", "生气", "中性", "厌恶", "恐惧"];
+  const labelsCN = ["开心", "难过", "生气", "中性", "惊讶", "恐惧"];
   const emotionKeys = ["joy", "sadness", "anger", "neutral", "disgust", "fear"];
   const dataValues = emotionKeys.map(key => emotion_scores[key] || 0);
   modalChart = new Chart(container, {
@@ -506,7 +506,7 @@ function show_emotion_chart(emotion_scores, container) {
             "#2196F3",
             "#FF9800",
             "#9E9E9E",
-            "#F44336",
+            "#7f36f4",
             "#000000"
           ]
         }

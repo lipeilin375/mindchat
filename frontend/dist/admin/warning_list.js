@@ -199,20 +199,20 @@ function showDetailModal(data) {
     if (xhr.status === 200) {
       let primaryEmotionText = "未知";
       switch (response.primary_emotion) {
-        case 'joy':
+        case 'happy':
           primaryEmotionText = "开心";
           break;
-        case 'sadness':
+        case 'sad':
           primaryEmotionText = "难过";
           break;
-        case 'anger':
+        case 'angry':
           primaryEmotionText = "生气";
           break;
         case 'neutral':
           primaryEmotionText = "中性";
           break;
-        case 'disgust':
-          primaryEmotionText = "厌恶";
+        case 'surprise':
+          primaryEmotionText = "惊讶";
           break;
         case 'fear':
           primaryEmotionText = "恐惧";
@@ -223,20 +223,20 @@ function showDetailModal(data) {
       mPrimaryEmotion.innerText = primaryEmotionText;
       let primaryEmotionRGB = "bg-secondary"; // 默认灰色
       switch (response.primary_emotion) {
-        case 'joy':
+        case 'happy':
           primaryEmotionRGB = "layui-bg-green";
           break;
-        case 'sadness':
+        case 'sad':
           primaryEmotionRGB = "layui-bg-blue";
           break;
-        case 'anger':
+        case 'angry':
           primaryEmotionRGB = "layui-bg-orange";
           break;
         case 'neutral':
           primaryEmotionRGB = "layui-bg-gray";
           break;
         case 'disgust':
-          primaryEmotionRGB = "layui-bg-red";
+          primaryEmotionRGB = "layui-bg-primary";
           break;
         case 'fear':
           primaryEmotionRGB = "layui-bg-dark";
@@ -335,7 +335,7 @@ function show_emotion_chart(emotion_scores, container) {
   if (modalChart) {
     modalChart.destroy();
   }
-  const labelsCN = ["开心", "难过", "生气", "中性", "厌恶", "恐惧"];
+  const labelsCN = ["开心", "难过", "生气", "中性", "惊讶", "恐惧"];
   const emotionKeys = ["joy", "sadness", "anger", "neutral", "disgust", "fear"];
   const dataValues = emotionKeys.map(key => emotion_scores[key] || 0);
   modalChart = new Chart(container, {
@@ -351,7 +351,7 @@ function show_emotion_chart(emotion_scores, container) {
             "#2196F3",
             "#FF9800",
             "#9E9E9E",
-            "#F44336",
+            "#7f36f4",
             "#000000"
           ]
         }
