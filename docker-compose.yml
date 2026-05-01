@@ -58,17 +58,10 @@ services:
 
   # ── Frontend ─────────────────────────────────────────────────────────────────
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: emotion_frontend
-    restart: unless-stopped
+    build: ./frontend
     ports:
-      - "8001:8001"
-    depends_on:
-      - backend
-    networks:
-      - emotion_net
+      - "8080:80"       # 本地 8080 → 容器 80
+    restart: unless-stopped
 
   # ── Ollama LLM service ───────────────────────────────────────────────────────
   # ollama:
