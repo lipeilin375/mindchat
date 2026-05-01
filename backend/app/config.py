@@ -41,7 +41,7 @@ class Settings(BaseSettings):
     CUSTOM_LLM_API_KEY: str = ""
 
     # ── CORS ──────────────────────────────────────────
-    CORS_ORIGINS: list[str] = ["http://127.0.0.1:5500","http://localhost:5500","https://www.mindchat.dpdns.org"]
+    CORS_ORIGINS: list[str] = ["https://www.mindchat.dpdns.org"]
 
     class Config:
         env_file = ".env"
