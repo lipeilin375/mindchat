@@ -32,7 +32,7 @@ services:
       dockerfile: Dockerfile
     container_name: emotion_worker
     restart: unless-stopped
-    command: python emotion_analyze_worker.py
+    command: python /app/app/emotion_analyze_worker.py
     env_file:
       - ./backend/.env
     environment:
@@ -41,7 +41,6 @@ services:
       - sqlite_data:/app/data
       - audio_uploads:/app/uploads/audio
       - ./backend/app:/app/app
-      - ./backend/worker.py:/app/worker.py
     networks:
       - emotion_net
     depends_on:
