@@ -56,7 +56,7 @@ class TrainConfig:
     output_dir: str = "./checkpoints"
     num_classes: int = 6
     label_names: List[str] = field(default_factory=lambda: [
-        "angry", "disgust", "fear", "happy", "neutral", "sad"
+        "angry", "fear", "happy", "neutral", "sad", "surprise"
     ])
 
     # 音频特征
