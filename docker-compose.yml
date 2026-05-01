@@ -27,7 +27,9 @@ services:
 
   # ── Worker（异步分析任务队列消费者）─────────────────────────────────────────
   worker:
-    image: emotion_backend   # 直接复用 backend 构建出的镜像
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: emotion_worker
     restart: unless-stopped
     command: python worker.py
