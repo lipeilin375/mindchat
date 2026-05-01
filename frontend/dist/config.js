@@ -12,11 +12,16 @@ $(document).ready(function (e) {
         window.location.href = './login.html';
     }
     authToken();
-    while (1) {
+    while (authToken()) {
         setTimeout(() => {
-            authToken();
-        }, 1000 * 60 * 10);
+            console.log('验证登录状态...');
+        }, 600000);
     }
+    clearTempStorage();
+    setTimeout(function () {
+        window.parent.location.href = './login.html';
+    }, 1200);
+
 });
 
 
@@ -32,16 +37,12 @@ async function authToken() {
     }).done(function (response, textStatus, xhr) {
         if (xhr.status === 401) {
             showPageNotify('warning', '登录状态已过期，请重新登录', 'animate__animated animate__shakeX');
-            clearTempStorage();
-            setTimeout(function () {
-                window.parent.location.href = './login.html';
-            }, 1200);
+            return false;
+        } else if (xhr.status === 200) {
+            return true;
         }
     }).fail(function (xhr) {
         showPageNotify('danger', '请求失败，请检查网络或后端服务', 'animate__animated animate__shakeX');
-        clearTempStorage();
-        setTimeout(function () {
-            window.parent.location.href = './login.html';
-        }, 1200);
+        return false;
     });
 }
