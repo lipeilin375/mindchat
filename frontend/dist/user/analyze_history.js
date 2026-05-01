@@ -59,10 +59,10 @@ window.onload = function () {
       },
       cols: [[
         {
-          field: 'analysis_id',
-          title: '分析ID',
+          field: 'record_id',
+          title: '录音ID',
           templet: function (d) {
-            return `#${d.analysis_id}`;
+            return `#${d.record_id}`;
           }
         },
         {
@@ -179,6 +179,10 @@ window.onload = function () {
 }
 
 function showDetailModal(analysis_id, index) {
+  if (!analysis_id) {
+    showPageNotify('danger', '无效的分析ID', 'animate__animated animate__shakeX');
+    return;
+  }
   const url = `${base_url}/api/analysis/${analysis_id}`;
   var mTitle = document.querySelector("#detailModalLabel")
   var mPrimaryEmotion = document.querySelector("#detail_primary_emotion")
