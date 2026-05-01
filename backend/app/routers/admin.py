@@ -166,6 +166,30 @@ def get_user_analyses(
     return {"total": total, "items": items}
 
 
+@router.get("/users/{user_id}/analyses/{analysis_id}", response_model=AnalysisResponse, summary="指定用户的分析记录")
+def get_user_analyses(
+    user_id: int,
+    analysis_id: int,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
+    db: Session = Depends(get_db),
+    _: User = Depends(get_admin_user),
+):
+    analysis = (
+        db.query(EmotionAnalysis)
+        .filter(
+            EmotionAnalysis.id == analysis_id,
+            EmotionAnalysis.user_id == user_id,
+        )
+        .first()
+    )
+    if not analysis:
+        raise HTTPException(status_code=404, detail="分析记录不存在")
+
+    record = db.query(AudioRecord).filter(AudioRecord.id == analysis.record_id).first()
+    return AnalysisResponse.from_orm_objects(record, analysis)
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Alerts
 # ─────────────────────────────────────────────────────────────────────────────
