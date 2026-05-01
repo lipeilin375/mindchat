@@ -53,7 +53,7 @@ $(document).ready(async function () {
 
 
 function redirectToLogin() {
-    showPageNotify('warning', '登录状态已过期，请重新登录', 'animate__animated animate__shakeX');
+    showPageAuthNotify('warning', '登录状态已过期，请重新登录', 'animate__animated animate__shakeX');
     setTimeout(() => {
         window.location.href = './login.html';
     }, 1200);
@@ -81,7 +81,26 @@ async function authToken() {
             return false;
         }
 
-        showPageNotify('danger', '请求失败，请检查网络或后端服务', 'animate__animated animate__shakeX');
+        showPageAuthNotify('danger', '请求失败，请检查网络或后端服务', 'animate__animated animate__shakeX');
         return false;
     }
+}
+
+
+function showPageAuthNotify(type, message, enterAnimation) {
+    $.notify({
+        message: message
+    }, {
+        type: type,
+        placement: {
+            from: 'top',
+            align: 'right'
+        },
+        z_index: 10800,
+        delay: 1800,
+        animate: {
+            enter: enterAnimation,
+            exit: 'animate__animated animate__fadeOutDown'
+        }
+    });
 }
