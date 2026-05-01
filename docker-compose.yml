@@ -41,6 +41,7 @@ services:
       - sqlite_data:/app/data
       - audio_uploads:/app/uploads/audio
       - ./backend/app:/app/app
+      - ./backend/emotion_analyze_worker.py:/app/app/emotion_analyze_worker.py
     networks:
       - emotion_net
     depends_on:
