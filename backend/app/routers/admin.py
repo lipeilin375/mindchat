@@ -166,54 +166,6 @@ def get_user_analyses(
     return {"total": total, "items": items}
 
 
-@router.get("/users/{user_id}/analyses", response_model=AnalysisListResponse, summary="指定用户的分析记录")
-def get_user_analyses(
-    user_id: int,
-    skip: int = Query(0, ge=0),
-    limit: int = Query(20, ge=1, le=100),
-    db: Session = Depends(get_db),
-    _: User = Depends(get_admin_user),
-):
-    base_query = (
-        db.query(AudioRecord)
-        .filter(
-            AudioRecord.user_id == user_id,
-            AudioRecord.status  != "failed",
-        )
-    )
-    total = base_query.count()
-
-    records = (
-        base_query
-        .order_by(AudioRecord.created_at.desc())
-        .offset(skip)
-        .limit(limit)
-        .all()
-    )
-
-    record_ids = [r.id for r in records]
-    analyses = {
-        a.record_id: a
-        for a in db.query(EmotionAnalysis)
-        .filter(EmotionAnalysis.record_id.in_(record_ids))
-        .all()
-    }
-
-    items = [
-        AnalysisListItem(
-            analysis_id      = analyses[r.id].id              if r.id in analyses else None,
-            record_id        = r.id,
-            primary_emotion  = analyses[r.id].primary_emotion  if r.id in analyses else None,
-            depression_level = analyses[r.id].depression_level if r.id in analyses else None,
-            phq_score        = analyses[r.id].phq_score        if r.id in analyses else None,
-            status           = r.status,
-            created_at       = r.created_at,
-        )
-        for r in records
-    ]
-    return {"total": total, "items": items}
-
-
 # ─────────────────────────────────────────────────────────────────────────────
 # Alerts
 # ─────────────────────────────────────────────────────────────────────────────
