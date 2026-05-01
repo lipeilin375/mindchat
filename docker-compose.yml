@@ -18,19 +18,55 @@ services:
       - ./backend/main.py:/app/app/main.py
     networks:
       - emotion_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   container_name: emotion_frontend
-  #   restart: unless-stopped
-  #   ports:
-  #     - "8001:8001"
-  #   depends_on:
-  #     - backend
-  #   networks:
-  #     - emotion_net
+  # ── Worker（异步分析任务队列消费者）─────────────────────────────────────────
+  worker:
+    image: emotion_backend   # 直接复用 backend 构建出的镜像
+    container_name: emotion_worker
+    restart: unless-stopped
+    command: python worker.py
+    env_file:
+      - ./backend/.env
+    environment:
+      POLL_INTERVAL_SEC: "3"
+    volumes:
+      - sqlite_data:/app/data
+      - audio_uploads:/app/uploads/audio
+      - ./backend/app:/app/app
+      - ./backend/worker.py:/app/worker.py
+    networks:
+      - emotion_net
+    depends_on:
+      backend:
+        condition: service_healthy
+    # 如需 GPU 加速 Whisper / wav2vec2，取消下方注释：
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
+  # ── Frontend ─────────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: emotion_frontend
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    depends_on:
+      - backend
+    networks:
+      - emotion_net
 
   # ── Ollama LLM service ───────────────────────────────────────────────────────
   # ollama:
@@ -40,17 +76,16 @@ services:
   #   ports:
   #     - "11434:11434"
   #   volumes:
-  #     - ollama_models:/root/.ollama     # persists downloaded model weights
+  #     - ollama_models:/root/.ollama
   #   networks:
   #     - emotion_net
-  #   # Uncomment the following if you have an NVIDIA GPU:
-  #   deploy:
-  #     resources:
-  #       reservations:
-  #         devices:
-  #           - driver: nvidia
-  #             count: all
-  #             capabilities: [gpu]
+  #   # deploy:
+  #   #   resources:
+  #   #     reservations:
+  #   #       devices:
+  #   #         - driver: nvidia
+  #   #           count: all
+  #   #           capabilities: [gpu]
 
 # ── Named volumes ────────────────────────────────────────────────────────────
 volumes:
