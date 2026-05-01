@@ -216,7 +216,7 @@ function showDetailModal(data) {
     showPageNotify('danger', '请求失败，请检查网络或后端服务', 'animate__animated animate__shakeX');
     clearTempStorage();
     setTimeout(function () {
-      window.parent.location.href = './login.html';
+      window.parent.location.href = '../login.html';
     }, 1200);
   });
 
@@ -457,7 +457,7 @@ function showEmotionModal(user_id, analysis_id) {
     showPageNotify('danger', '请求失败，请检查网络或后端服务', 'animate__animated animate__shakeX');
     clearTempStorage();
     setTimeout(function () {
-      window.parent.location.href = './login.html';
+      window.parent.location.href = '../login.html';
     }, 1200);
   });
 }

@@ -175,7 +175,7 @@ function showDetailModal(data) {
     showPageNotify('danger', '请求失败，请检查网络或后端服务', 'animate__animated animate__shakeX');
     clearTempStorage();
     setTimeout(function () {
-      window.parent.location.href = './login.html';
+      window.parent.location.href = '../login.html';
     }, 1200);
   });
 
@@ -276,7 +276,7 @@ function showDetailModal(data) {
     showPageNotify('danger', '请求失败，请检查网络或后端服务', 'animate__animated animate__shakeX');
     clearTempStorage();
     setTimeout(function () {
-      window.parent.location.href = './login.html';
+      window.parent.location.href = '../login.html';
     }, 1200);
   });
 }
@@ -302,7 +302,7 @@ function markAlertRead(alertId) {
     showPageNotify('danger', '请求失败，请检查网络或后端服务', 'animate__animated animate__shakeX');
     clearTempStorage();
     setTimeout(function () {
-      window.parent.location.href = './login.html';
+      window.parent.location.href = '../login.html';
     }, 1200);
   });
 }
