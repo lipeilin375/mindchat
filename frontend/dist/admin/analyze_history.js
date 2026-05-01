@@ -59,16 +59,39 @@ window.onload = function () {
       },
       cols: [[
         {
+          field: 'analysis_id',
+          title: '分析ID',
+          templet: function (d) {
+            return `#${d.analysis_id}`;
+          }
+        },
+        {
+          field: 'status',
+          title: '状态',
+          templet: function (d) {
+            let status_badge = '';
+            switch (d.status) {
+              case 'pending': status_badge = '<span class="layui-badge layui-bg-orange">处理中</span>'; break;
+              case 'processing': status_badge = '<span class="layui-badge layui-bg-green">处理中</span>'; break;
+              case 'transcribed': status_badge = '<span class="layui-badge layui-bg-blue">分析中</span>'; break;
+              case 'done': status_badge = '<span class="layui-badge layui-bg-green">已完成</span>'; break;
+              case 'failed': status_badge = '<span class="layui-badge layui-bg-red">失败</span>'; break;
+              default: status_badge = '<span class="layui-badge layui-bg-gray">未知</span>';
+            }
+            return status_badge;
+          }
+        },
+        {
           field: 'primary_emotion',
           title: '主要情绪',
           templet: function (d) {
             let primary_emotion_badge = '';
             switch (d.primary_emotion) {
-              case 'joy': primary_emotion_badge = '<span class="layui-badge layui-bg-green">开心</span>'; break;
-              case 'sadness': primary_emotion_badge = '<span class="layui-badge layui-bg-blue">难过</span>'; break;
-              case 'anger': primary_emotion_badge = '<span class="layui-badge layui-bg-orange">生气</span>'; break;
+              case 'happy': primary_emotion_badge = '<span class="layui-badge layui-bg-green">开心</span>'; break;
+              case 'sad': primary_emotion_badge = '<span class="layui-badge layui-bg-blue">难过</span>'; break;
+              case 'angry': primary_emotion_badge = '<span class="layui-badge layui-bg-orange">生气</span>'; break;
               case 'neutral': primary_emotion_badge = '<span class="layui-badge layui-bg-gray">中性</span>'; break;
-              case 'disgust': primary_emotion_badge = '<span class="layui-badge">厌恶</span>'; break;
+              case 'surprise': primary_emotion_badge = '<span class="layui-badge layui-bg-primary">惊讶</span>'; break;
               case 'fear': primary_emotion_badge = '<span class="layui-badge layui-bg-black">恐惧</span>'; break;
               default: primary_emotion_badge = '<span class="layui-badge layui-bg-gray">未知</span>';
             }
@@ -178,20 +201,20 @@ function showDetailModal(analysis_id) {
       mTitle.innerText = `分析详情`;
       let primaryEmotionText = "未知";
       switch (response.primary_emotion) {
-        case 'joy':
+        case 'happy':
           primaryEmotionText = "开心";
           break;
-        case 'sadness':
+        case 'sad':
           primaryEmotionText = "难过";
           break;
-        case 'anger':
+        case 'angry':
           primaryEmotionText = "生气";
           break;
         case 'neutral':
           primaryEmotionText = "中性";
           break;
-        case 'disgust':
-          primaryEmotionText = "厌恶";
+        case 'surprise':
+          primaryEmotionText = "惊讶";
           break;
         case 'fear':
           primaryEmotionText = "恐惧";
@@ -202,20 +225,20 @@ function showDetailModal(analysis_id) {
       mPrimaryEmotion.innerText = primaryEmotionText;
       let primaryEmotionRGB = "bg-secondary"; // 默认灰色
       switch (response.primary_emotion) {
-        case 'joy':
+        case 'happy':
           primaryEmotionRGB = "bg-success";
           break;
-        case 'sadness':
+        case 'sad':
           primaryEmotionRGB = "bg-info";
           break;
-        case 'anger':
+        case 'angry':
           primaryEmotionRGB = "bg-warning";
           break;
         case 'neutral':
           primaryEmotionRGB = "bg-secondary";
           break;
-        case 'disgust':
-          primaryEmotionRGB = "bg-danger";
+        case 'surprise':
+          primaryEmotionRGB = "bg-primary";
           break;
         case 'fear':
           primaryEmotionRGB = "bg-dark";
@@ -289,8 +312,8 @@ function show_emotion_chart(emotion_scores, container) {
   if (modalChart) {
     modalChart.destroy();
   }
-  const labelsCN = ["开心", "难过", "生气", "中性", "厌恶", "恐惧"];
-  const emotionKeys = ["joy", "sadness", "anger", "neutral", "disgust", "fear"];
+  const labelsCN = ["开心", "难过", "生气", "中性", "惊讶", "恐惧"];
+  const emotionKeys = ["happy", "sad", "angry", "neutral", "surprise", "fear"];
   const dataValues = emotionKeys.map(key => emotion_scores[key] || 0);
   modalChart = new Chart(container, {
     type: 'pie',
