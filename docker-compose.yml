@@ -32,7 +32,8 @@ services:
       dockerfile: Dockerfile
     container_name: emotion_worker
     restart: unless-stopped
-    command: python /app/app/emotion_analyze_worker.py
+    command: python -m app.emotion_analyze_worker
+    working_dir: /app
     env_file:
       - ./backend/.env
     environment:
