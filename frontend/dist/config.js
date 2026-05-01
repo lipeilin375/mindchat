@@ -9,40 +9,46 @@ function clearTempStorage() {
 
 
 $(document).ready(async function () {
-    const userStr = localStorage.getItem('mindchat_user');
-
-    if (!userStr) {
-        window.location.href = './login.html';
+    if (location.pathname === '/login.html' || location.pathname === '/register.html') {
+        clearTempStorage();
         return;
-    }
+    } else if (location.pathname === '/index.html' || location.pathname === '/admin.html') {
+        // 其他页面需要验证登录状态
+        const userStr = localStorage.getItem('mindchat_user');
 
-    if  (JSON.parse(userStr).role !== 'admin' && location.pathname == '/admin.html') {
-        window.location.href = './index.html';
-        return;
-    }
-
-    if (JSON.parse(userStr).role === 'admin' && location.pathname == '/index.html') {
-        window.location.href = './admin.html';
-        return;
-    }
-
-    // 先验证一次
-    const isValid = await authToken();
-    if (!isValid) {
-        redirectToLogin();
-        return;
-    }
-
-    // 每10分钟验证一次
-    setInterval(async () => {
-        console.log('验证登录状态...');
-        const valid = await authToken();
-        if (!valid) {
-            redirectToLogin();
+        if (!userStr) {
+            window.location.href = './login.html';
+            return;
         }
-    }, 600000);
 
-    clearTempStorage();
+        if (JSON.parse(userStr).role !== 'admin' && location.pathname == '/admin.html') {
+            window.location.href = './index.html';
+            return;
+        }
+
+        if (JSON.parse(userStr).role === 'admin' && location.pathname == '/index.html') {
+            window.location.href = './admin.html';
+            return;
+        }
+
+        // 先验证一次
+        const isValid = await authToken();
+        if (!isValid) {
+            clearTempStorage();
+            redirectToLogin();
+            return;
+        }
+
+        // 每10分钟验证一次
+        setInterval(async () => {
+            const valid = await authToken();
+            if (!valid) {
+                clearTempStorage();
+                redirectToLogin();
+            }
+        }, 600000);
+
+    }
 });
 
 
