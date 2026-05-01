@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 import json
 
 
@@ -48,11 +48,11 @@ class AnalysisResponse(BaseModel):
 
 
 class AnalysisListItem(BaseModel):
-    analysis_id: int
+    analysis_id: Optional[int] = None
     record_id: int
-    primary_emotion: str | None
-    depression_level: str | None
-    phq_score: int | None
+    primary_emotion: Optional[str] = None
+    depression_level: Optional[str] = None
+    phq_score: Optional[int] = None
     status: str
     created_at: datetime
 
