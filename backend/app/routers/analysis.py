@@ -64,26 +64,6 @@ async def upload_audio(
     )
 
 
-# @router.post("/upload", response_model=AnalysisResponse, summary="上传语音并触发分析")
-# async def upload_audio(
-#     file: UploadFile = File(..., description="音频文件（支持 webm/wav/mp3/ogg/m4a 等）"),
-#     db: Session = Depends(get_db),
-#     current_user: User = Depends(get_current_user),
-# ):
-#     """
-#     接收用户上传的录音文件，执行：
-#     1. 转码为 MP3 保存
-#     2. Whisper 语音转文字
-#     3. LLM 情绪 + 抑郁倾向分析
-#     4. 持久化结果并按需生成预警
-#     """
-#     # File size guard (read content-length header if present)
-#     max_bytes = settings.MAX_AUDIO_SIZE_MB * 1024 * 1024
-#     # We rely on ffmpeg to reject truly invalid files; size check via file_size after save
-
-#     return await process_voice_analysis(file, current_user.id, db)
-
-
 @router.get("/history", response_model=AnalysisListResponse, summary="获取当前用户历史分析")
 def get_history(
     skip: int = Query(0, ge=0),
@@ -92,37 +72,42 @@ def get_history(
     current_user: User = Depends(get_current_user),
 ):
     base_query = (
-        db.query(EmotionAnalysis)
-        .filter(EmotionAnalysis.user_id == current_user.id)
+        db.query(AudioRecord)
+        .filter(
+            AudioRecord.user_id == current_user.id,
+            AudioRecord.status  != "failed",        # 过滤失败记录
+        )
     )
     total = base_query.count()
- 
-    rows = (
+
+    records = (
         base_query
-        .order_by(EmotionAnalysis.created_at.desc())
+        .order_by(AudioRecord.created_at.desc())
         .offset(skip)
         .limit(limit)
         .all()
     )
- 
-    # 批量取出关联 record，避免 N+1 查询
-    record_ids = [r.record_id for r in rows]
-    records = {
-        rec.id: rec
-        for rec in db.query(AudioRecord).filter(AudioRecord.id.in_(record_ids)).all()
+
+    # 批量取出已完成的分析结果，避免 N+1
+    record_ids = [r.id for r in records]
+    analyses = {
+        a.record_id: a
+        for a in db.query(EmotionAnalysis)
+        .filter(EmotionAnalysis.record_id.in_(record_ids))
+        .all()
     }
- 
+
     items = [
         AnalysisListItem(
-            analysis_id      = r.id,
-            record_id        = r.record_id,
-            primary_emotion  = r.primary_emotion,
-            depression_level = r.depression_level,
-            phq_score        = r.phq_score,
-            status           = records[r.record_id].status if r.record_id in records else "unknown",
+            analysis_id      = analyses[r.id].id if r.id in analyses else None,
+            record_id        = r.id,
+            primary_emotion  = analyses[r.id].primary_emotion  if r.id in analyses else None,
+            depression_level = analyses[r.id].depression_level if r.id in analyses else None,
+            phq_score        = analyses[r.id].phq_score        if r.id in analyses else None,
+            status           = r.status,
             created_at       = r.created_at,
         )
-        for r in rows
+        for r in records
     ]
     return {"total": total, "items": items}
 
