@@ -12,7 +12,7 @@ $(document).ready(async function () {
     if (location.pathname === '/login.html' || location.pathname === '/register.html') {
         clearTempStorage();
         return;
-    } else if (location.pathname === '/index.html' || location.pathname === '/admin.html') {
+    } else if (location.pathname === '/index.html' || location.pathname === '/admin.html' || location.pathname === '/') {
         // 其他页面需要验证登录状态
         const userStr = localStorage.getItem('mindchat_user');
 
