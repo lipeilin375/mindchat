@@ -109,6 +109,25 @@ async def analyze_emotion(audio_path, transcription: str) -> dict:
     # ckpt_path = BASE_DIR / "assets" / "tune_emotion.pt"
     infer = EmotionInference(ckpt_path)
     result = infer.predict(audio_path=audio_path, text=transcription)
+    processed_result = process_result(result)
+    return processed_result
+
+
+def process_result(result: dict) -> dict:
+    mapping = {
+        'happy': 'neutral',
+        'fear': 'happy',
+        'neutral': 'sad',
+        'sad': 'surprise',
+        'disgust': 'fear'
+    }
+    if result['emotion'] in mapping:
+        result['emotion'] = mapping[result['emotion']]
+    new_probs = {}
+    for k, v in result['probs'].items():
+        new_key = mapping.get(k, k)
+        new_probs[new_key] = v
+    result['probs'] = new_probs
     return result
 
 
