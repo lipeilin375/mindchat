@@ -336,7 +336,7 @@ function show_emotion_chart(emotion_scores, container) {
     modalChart.destroy();
   }
   const labelsCN = ["开心", "难过", "生气", "中性", "惊讶", "恐惧"];
-  const emotionKeys = ["joy", "sadness", "anger", "neutral", "disgust", "fear"];
+  const emotionKeys = ["happy", "sad", "angry", "neutral", "surprise", "fear"];
   const dataValues = emotionKeys.map(key => emotion_scores[key] || 0);
   modalChart = new Chart(container, {
     type: 'pie',

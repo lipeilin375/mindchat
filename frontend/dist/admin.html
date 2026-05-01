@@ -342,13 +342,8 @@
   <script type="text/javascript" src="./js/jquery.cookie.min.js"></script>
   <script type="text/javascript" src="./js/index.min.js"></script>
   <script type="text/javascript" src="./config.js"></script>
-  <script type="text/javascript">
-    $(document).ready(function (e) {
-      if (!localStorage.getItem('mindchat_user') || JSON.parse(localStorage.getItem('mindchat_user')).role != 'admin') {
-        window.location.href = './login.html';
-      }
-      $('#username').text(localStorage.getItem('mindchat_user') ? JSON.parse(localStorage.getItem('mindchat_user')).username : 'MindChater');
-    });
+  <script>
+    $('#username').text(localStorage.getItem('mindchat_user') ? JSON.parse(localStorage.getItem('mindchat_user')).username : 'MindChater');
   </script>
 </body>
 
