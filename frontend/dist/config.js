@@ -7,42 +7,75 @@ function clearTempStorage() {
     sessionStorage.clear();
 }
 
-$(document).ready(function (e) {
-    if (!localStorage.getItem('mindchat_user') || JSON.parse(localStorage.getItem('mindchat_user')).role != 'admin') {
-        window.location.href = './login.html';
-    }
-    authToken();
-    while (authToken()) {
-        setTimeout(() => {
-            console.log('验证登录状态...');
-        }, 600000);
-    }
-    clearTempStorage();
-    setTimeout(function () {
-        window.parent.location.href = './login.html';
-    }, 1200);
 
+$(document).ready(async function () {
+    const userStr = localStorage.getItem('mindchat_user');
+
+    if (!userStr) {
+        window.location.href = './login.html';
+        return;
+    }
+
+    if  (JSON.parse(userStr).role !== 'admin' && location.pathname == '/admin.html') {
+        window.location.href = './index.html';
+        return;
+    }
+
+    if (JSON.parse(userStr).role === 'admin' && location.pathname == '/index.html') {
+        window.location.href = './admin.html';
+        return;
+    }
+
+    // 先验证一次
+    const isValid = await authToken();
+    if (!isValid) {
+        redirectToLogin();
+        return;
+    }
+
+    // 每10分钟验证一次
+    setInterval(async () => {
+        console.log('验证登录状态...');
+        const valid = await authToken();
+        if (!valid) {
+            redirectToLogin();
+        }
+    }, 600000);
+
+    clearTempStorage();
 });
 
 
+function redirectToLogin() {
+    showPageNotify('warning', '登录状态已过期，请重新登录', 'animate__animated animate__shakeX');
+    setTimeout(() => {
+        window.location.href = './login.html';
+    }, 1200);
+}
+
+
 async function authToken() {
-    var token = localStorage.getItem('mindchat_token');
-    $.ajax({
-        url: base_url + '/api/auth/me',
-        method: 'GET',
-        timeout: 0,
-        headers: {
-            'Authorization': 'Bearer ' + token
-        }
-    }).done(function (response, textStatus, xhr) {
+    const token = localStorage.getItem('mindchat_token');
+
+    if (!token) return false;
+
+    try {
+        const response = await $.ajax({
+            url: base_url + '/api/auth/me',
+            method: 'GET',
+            timeout: 0,
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        });
+
+        return true;
+    } catch (xhr) {
         if (xhr.status === 401) {
-            showPageNotify('warning', '登录状态已过期，请重新登录', 'animate__animated animate__shakeX');
             return false;
-        } else if (xhr.status === 200) {
-            return true;
         }
-    }).fail(function (xhr) {
+
         showPageNotify('danger', '请求失败，请检查网络或后端服务', 'animate__animated animate__shakeX');
         return false;
-    });
+    }
 }
