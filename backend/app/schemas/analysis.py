@@ -53,6 +53,7 @@ class AnalysisListItem(BaseModel):
     primary_emotion: str | None
     depression_level: str | None
     phq_score: int | None
+    status: str
     created_at: datetime
 
     class Config:
@@ -88,3 +89,10 @@ class AdminStatsResponse(BaseModel):
     unread_alerts: int
     depression_distribution: dict   # {none: N, mild: N, moderate: N, severe: N}
     emotion_distribution: dict      # {joy: N, sadness: N, ...}
+
+
+class TaskAcceptedResponse(BaseModel):
+    record_id: int
+    task_id:   int
+    status:    str
+    message:   str
