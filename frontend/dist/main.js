@@ -144,3 +144,21 @@ function show_emotion_chart(distribution) {
         },
     });
 }
+
+function showPageNotify(type, message, enterAnimation) {
+  $.notify({
+    message: message
+  }, {
+    type: type,
+    placement: {
+      from: 'top',
+      align: 'right'
+    },
+    z_index: 10800,
+    delay: 1800,
+    animate: {
+      enter: enterAnimation,
+      exit: 'animate__animated animate__fadeOutDown'
+    }
+  });
+}
